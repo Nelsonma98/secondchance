@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import RegexValidator
 
 # Create your models here.
 class Category(models.Model):
@@ -13,7 +14,10 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='products/')
-    contact_phone = models.CharField()
+    contact_phone = models.CharField(
+        max_length=10,
+        validators=[RegexValidator(r'^\d{8}$', 'El teléfono debe contener exactamente 8 dígitos')]
+    )
     category = models.ForeignKey(
         Category, 
         on_delete=models.CASCADE, 
