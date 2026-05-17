@@ -15,7 +15,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from shop import views as shop_views
+from panel import views as panel_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('', shop_views.home, name='home'),
+
+    path('panel/', panel_views.panel, name='panel'),
+
+    path('panel/login/', panel_views.login, name='login'),
+
+    path('panel/categories', panel_views.category_panel, name='categories_panel'),
+
+    path('panel/products', panel_views.product_panel, name='products_panel'),
+
+    path('panel/ads', panel_views.ad_panel, name='ads_panel'),
 ]

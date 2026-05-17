@@ -1,0 +1,11 @@
+<h1>LogIn</h1>
+
+{{error}}
+
+<form action="/panel/login/" method="post">
+    {% csrf_token %}
+
+    {{form.as_p}}
+
+    <button type="submit">LogIn</button>
+</form>
