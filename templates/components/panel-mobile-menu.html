@@ -1,0 +1,48 @@
+{% load static %}
+
+<div class="panel-mobile-menu-overlay" data-mobile-menu-close></div>
+<aside class="panel-mobile-menu" data-panel-mobile-menu aria-label="Menu lateral del panel">
+    <div class="panel-mobile-menu-header">
+        <strong>Menu</strong>
+        <button type="button" class="panel-mobile-menu-close" data-mobile-menu-close aria-label="Cerrar menu">
+            Cerrar
+        </button>
+    </div>
+
+    {% include "components/search.html" with search_input_id="search-id-mobile" %}
+    {% include "components/navigator.html" %}
+</aside>
+
+<script>
+(function () {
+    const body = document.body;
+    const menu = document.querySelector('[data-panel-mobile-menu]');
+    const openButtons = document.querySelectorAll('[data-mobile-menu-open]');
+    const closeTriggers = document.querySelectorAll('[data-mobile-menu-close]');
+
+    if (!menu || !openButtons.length) {
+        return;
+    }
+
+    const closeMenu = () => body.classList.remove('panel-mobile-menu-open');
+    const openMenu = () => body.classList.add('panel-mobile-menu-open');
+
+    openButtons.forEach((button) => {
+        button.addEventListener('click', openMenu);
+    });
+
+    closeTriggers.forEach((trigger) => {
+        trigger.addEventListener('click', closeMenu);
+    });
+
+    menu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeMenu();
+        }
+    });
+})();
+</script>

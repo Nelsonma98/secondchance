@@ -1,1 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Administración de categorías{% endblock %}
+
+{% block navbar %}
+<div class="hide-web">
+    {% include "components/navigator.html" %}
+    {% include "components/search.html" with search_input_id="search-id-desktop" %}
+</div>
+<div class="panel-mobile-controls">
+    {% include "components/logout.html" %}
+    <button type="button" class="panel-mobile-menu-btn" data-mobile-menu-open aria-label="Abrir menu">
+        <img src="{% static 'icons/menu.svg' %}" alt="" class="panel-mobile-menu-icon">
+    </button>
+</div>
+{% endblock %}
+    
+{% block content %}
+{% include "components/panel-mobile-menu.html" %}
 <h1>Administracion de categorias</h1>
+{% endblock %}

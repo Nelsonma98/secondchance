@@ -1,0 +1,23 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/panel/panel.css' %}">
+
+<nav class="panel-navigator" aria-label="Navegacion del panel">
+    <a
+        href="/panel/products"
+        class="panel-nav-link {% if '/panel/products' in request.path or '/panel/product/' in request.path %}is-active{% endif %}"
+    >
+        Productos
+    </a>
+    <a
+        href="/panel/categories/"
+        class="panel-nav-link {% if '/panel/categories/' in request.path or '/panel/category/' in request.path %}is-active{% endif %}"
+    >
+        Categorias
+    </a>
+    <a
+        href="/panel/ads/"
+        class="panel-nav-link {% if '/panel/ads' in request.path or '/panel/ad/' in request.path %}is-active{% endif %}"
+    >
+        Anuncios
+    </a>
+</nav>

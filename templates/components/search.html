@@ -1,0 +1,14 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/search.css' %}">
+<form class="search" action="." method="get" aria-label="Buscar">
+    <input
+        type="text"
+        name="search"
+        search="{{ search|default:'search' }}"
+        placeholder="Buscar"
+        autocomplete="off"
+    />
+    <button type="submit" class="search-btn" aria-label="Buscar">
+        <img src="{% static 'icons/search.svg' %}" alt="">
+    </button>
+</form>

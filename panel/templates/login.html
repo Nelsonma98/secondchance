@@ -1,11 +1,66 @@
-<h1>LogIn</h1>
+{% extends "base.html" %}
+{% load static %}
 
-{{error}}
+{% block title %}Iniciar sesión{% endblock %}
 
-<form action="/panel/login/" method="post">
-    {% csrf_token %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+<section class="login">
+    <div class="card">
+        <div class="logo-login">
+            <img src="{% static 'images/logo2.png' %}" alt="Logo">
+        </div>
 
-    {{form.as_p}}
+        <div class="text-login">
+            <h1>
+                <span class="gradient-text">Bienvenido</span> de vuelta
+            </h1>
+    
+            <p>Inicia sesión para continuar</p>
+        </div>
 
-    <button type="submit">LogIn</button>
-</form>
+        {% if error %}
+            <div class="error">
+                <p>{{ error }}</p>
+                <span class="close-error" onclick="this.parentElement.style.display='none';"><img src="{% static 'icons/cancel_error.svg' %}" alt="X"></span>
+            </div>
+        {% endif %}
+
+        <form action="/panel/login/" method="post">
+            {% csrf_token %}
+            <div class="username-field">
+                <img class="icon-username" src="{% static 'icons/account_circle.svg' %}" alt="Nombre de usuario">
+                <input class="username-input" type="text" name="username" placeholder="Usuario" required>
+            </div>
+            <div class="password-field">
+                <img class="icon-password" src="{% static 'icons/lock.svg' %}" alt="Contraseña">
+                <input id="password-input" type="password" name="password" placeholder="Contraseña" required>
+                <button id="toggle-password" class="password-toggle" type="button" aria-label="Mostrar contraseña">
+                    <img id="password-icon" src="{% static 'icons/visibility.svg' %}" alt="Mostrar contraseña">
+                </button>
+            </div>
+            <button type="submit" class="btn-primary">Iniciar sesión</button>
+        </form>
+    </div>
+</section>
+<script>
+    (function() {
+        const passwordInput = document.getElementById('password-input');
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordIcon = document.getElementById('password-icon');
+
+        if (!passwordInput || !togglePassword || !passwordIcon) return;
+
+        const iconShow = "{% static 'icons/visibility.svg' %}";
+        const iconHide = "{% static 'icons/visibility_off.svg' %}";
+
+        togglePassword.addEventListener('click', function() {
+            const isHidden = passwordInput.type === 'password';
+            passwordInput.type = isHidden ? 'text' : 'password';
+            passwordIcon.src = isHidden ? iconHide : iconShow;
+            passwordIcon.alt = isHidden ? 'Ocultar contraseña' : 'Mostrar contraseña';
+            togglePassword.setAttribute('aria-label', isHidden ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        });
+    })();
+</script>
+{% endblock %}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Chance - {% block title %}{% endblock %}</title>
+    <meta name="description" content="Catálogo digital de productos de del taller Second Chance.">
+    <meta name="keywords" content="reparación smartphone, reparación consolas, Second Chance">
+    <meta>
+    <meta name="author" content="Nelson Mendoza Alvarez">
+    <link rel="icon" type="image/png" href="{% static 'images/icono.png' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav>
+         <div class="navbar">
+            <img src="{% static 'images/logo.png' %}" alt="Second Chance" class="logo" />
+
+            {% block navbar %}
+            {% endblock %}
+        </div>
+    </nav>
+
+    <main class="container main-content mt-4">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <img src="{% static 'images/logo.png' %}" alt="Second Chance" class="footer-logo" />
+            </div>
+            <div class="footer-col">
+                <p class="eslogan">"Tu equipo <span class="grad-text">no está perdido...</span><br> solo necesita <span class="grad-text">las manos correctas.</span>"</p>
+            </div>
+            <div class="footer-col">
+                <img src="{% static 'icons/location.svg' %}" alt="Dirección">
+                <p>Calle Falsa 123, Manzanillo, Granma, Cuba.</p>
+            </div>
+        </div>
+
+        <div class="footer-divider"></div>
+
+        <div class="footer-info">
+            <p>© Sice 2023, Second Chance. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>

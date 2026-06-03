@@ -1,1 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Página principal{% endblock %}
+
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+{% block navbar %}
+{% include "components/search.html" %}
+{% endblock %}
+
+{% block content %}
 <h1>Pagina principal</h1>
+{% endblock %}
