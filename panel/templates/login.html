@@ -19,6 +19,8 @@
             <p>Inicia sesión para continuar</p>
         </div>
 
+        {% include "components/messages.html" %}
+
         {% if error %}
             <div class="error">
                 <p>{{ error }}</p>

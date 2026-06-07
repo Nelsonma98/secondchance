@@ -22,4 +22,11 @@ urlpatterns = [
     path('ad/create/', views.create_ad, name='create_ad'),
     path('ad/edit/<int:ad_id>/', views.edit_ad, name='edit_ad'),
     path('ad/delete/<int:ad_id>/', views.delete_ad, name='delete_ad'),
+
+    # User
+    path('profile/username/', views.update_profile_username, name='update_profile_username'),
+    path('profile/password/', views.update_profile_password, name='update_profile_password'),
+    path('profile/delete/', views.delete_profile, name='delete_profile'),
+    path('users/create/', views.create_user, name='create_user'),
+    path('', views.panel, name='panel' ),
 ]

@@ -3,6 +3,12 @@
 
 <nav class="panel-navigator" aria-label="Navegacion del panel">
     <a
+        href="/panel/"
+        class="panel-nav-link {% if request.path == '/panel/' %}is-active{% endif %}"
+    >
+        Perfil
+    </a>
+    <a
         href="/panel/products"
         class="panel-nav-link {% if '/panel/products' in request.path or '/panel/product/' in request.path %}is-active{% endif %}"
     >

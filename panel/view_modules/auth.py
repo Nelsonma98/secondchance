@@ -19,7 +19,7 @@ def login(request):
         return render(request, 'login.html', build_login_context(error='Usuario o contraseña incorrecta.'))
 
     auth_login(request, user)
-    return redirect('/panel/products')
+    return redirect('/panel/')
 
 def logout(request):
     auth_logout(request)

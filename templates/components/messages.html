@@ -1,0 +1,34 @@
+{% load static %}
+
+{% if messages %}
+    <link rel="stylesheet" href="{% static 'css/messages.css' %}">
+
+    <div class="messages-container" aria-label="Notificaciones">
+        {% for message in messages %}
+            <div
+                class="message-alert {% if 'error' in message.tags %}message-alert-error{% else %}message-alert-success{% endif %}"
+                role="{% if 'error' in message.tags %}alert{% else %}status{% endif %}"
+            >
+                <p>{{ message }}</p>
+                <button
+                    class="message-close"
+                    type="button"
+                    aria-label="Cerrar mensaje"
+                    data-message-close
+                >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+    (() => {
+        document.querySelectorAll("[data-message-close]").forEach((button) => {
+            button.addEventListener("click", () => {
+                button.closest(".message-alert").remove();
+            });
+        });
+    })();
+    </script>
+{% endif %}

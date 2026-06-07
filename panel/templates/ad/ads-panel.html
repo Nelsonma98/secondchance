@@ -17,5 +17,279 @@
 
 {% block content %}
 {% include "components/panel-mobile-menu.html" %}
-<h1>Administracion de anuncios</h1>
+<link rel="stylesheet" href="{% static 'css/panel/ad.css' %}">
+
+<div class="ads-page">
+    {% include "components/messages.html" %}
+
+    <section class="ads-grid" aria-label="Anuncios">
+        <button class="ad-card add-ad-card" id="open-ad-modal" type="button">
+            <span class="plus-symbol">+</span>
+            <span class="add-ad-text">Agregar<br>anuncio</span>
+        </button>
+
+        {% for ad in ads %}
+            <article class="ad-card">
+                <div class="ad-image-wrap">
+                    {% if ad.image %}
+                        <img class="ad-image" src="{{ ad.image.url }}" alt="{{ ad.name }}">
+                    {% else %}
+                        <div class="ad-image-placeholder">Sin imagen</div>
+                    {% endif %}
+                    <span class="ad-order">Orden {{ ad.order }}</span>
+                </div>
+
+                <div class="ad-details">
+                    <div>
+                        <h2 class="ad-title">{{ ad.name }}</h2>
+                        <p class="ad-id">ID.{{ ad.id }}</p>
+                    </div>
+
+                    <div class="ad-actions">
+                        <button
+                            class="icon-button edit-button"
+                            type="button"
+                            data-edit-url="{% url 'edit_ad' ad.id %}"
+                            data-ad-name="{{ ad.name }}"
+                            data-ad-order="{{ ad.order }}"
+                            data-ad-image="{% if ad.image %}{{ ad.image.url }}{% endif %}"
+                            aria-label="Editar {{ ad.name }}"
+                            title="Editar anuncio"
+                        >
+                            <img src="{% static 'icons/edit_square.svg' %}" alt="">
+                        </button>
+
+                        <button
+                            class="icon-button delete-button"
+                            type="button"
+                            data-delete-url="{% url 'delete_ad' ad.id %}"
+                            data-item-name="{{ ad.name|escape }}"
+                            aria-label="Eliminar {{ ad.name }}"
+                            title="Eliminar anuncio"
+                        >
+                            <img src="{% static 'icons/delete.svg' %}" alt="">
+                        </button>
+                    </div>
+                </div>
+            </article>
+        {% empty %}
+            {% if search %}
+                <p class="empty-message">No se encontraron anuncios para “{{ search }}”.</p>
+            {% endif %}
+        {% endfor %}
+    </section>
+</div>
+
+<div class="modal-overlay" id="ad-modal" hidden>
+    <section class="modal-window" role="dialog" aria-modal="true" aria-labelledby="create-ad-title">
+        <header class="modal-header">
+            <h2 id="create-ad-title">Agregar anuncio</h2>
+            <button class="close-modal-button" id="close-ad-modal" type="button" aria-label="Cerrar formulario">
+                <img src="{% static 'icons/cancel.svg' %}" alt="">
+            </button>
+        </header>
+
+        <form action="{% url 'create_ad' %}" method="post" enctype="multipart/form-data" class="ad-form">
+            {% csrf_token %}
+
+            <div class="form-grid">
+                <div class="form-field form-field-wide">
+                    <label for="ad-name">Nombre del anuncio</label>
+                    <input class="ad-input" id="ad-name" name="name" type="text" maxlength="50" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="ad-order">Orden de aparición</label>
+                    <input class="ad-input" id="ad-order" name="order" type="number" min="0" value="0" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="ad-image">Imagen</label>
+                    <input class="file-input" id="ad-image" name="image" type="file" accept="image/*" required>
+                </div>
+            </div>
+
+            <div class="image-preview" id="create-image-preview" hidden>
+                <img alt="Vista previa del anuncio">
+            </div>
+
+            <div class="modal-actions">
+                <button class="secondary-button" id="cancel-ad-modal" type="button">Cancelar</button>
+                <button class="primary-button" type="submit">Guardar anuncio</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<div class="modal-overlay" id="edit-ad-modal" hidden>
+    <section class="modal-window" role="dialog" aria-modal="true" aria-labelledby="edit-ad-title">
+        <header class="modal-header">
+            <h2 id="edit-ad-title">Editar anuncio</h2>
+            <button class="close-modal-button" id="close-edit-ad-modal" type="button" aria-label="Cerrar formulario">
+                <img src="{% static 'icons/cancel.svg' %}" alt="">
+            </button>
+        </header>
+
+        <form method="post" enctype="multipart/form-data" class="ad-form" id="edit-ad-form">
+            {% csrf_token %}
+
+            <div class="form-grid">
+                <div class="form-field form-field-wide">
+                    <label for="edit-ad-name">Nombre del anuncio</label>
+                    <input class="ad-input" id="edit-ad-name" name="name" type="text" maxlength="50" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="edit-ad-order">Orden de aparición</label>
+                    <input class="ad-input" id="edit-ad-order" name="order" type="number" min="0" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="edit-ad-image">Reemplazar imagen</label>
+                    <input class="file-input" id="edit-ad-image" name="image" type="file" accept="image/*">
+                </div>
+            </div>
+
+            <div class="image-preview" id="edit-image-preview">
+                <img alt="Imagen actual del anuncio">
+            </div>
+
+            <p class="form-hint">Si no seleccionas otra imagen, se conservará la actual.</p>
+
+            <div class="modal-actions">
+                <button class="secondary-button" id="cancel-edit-ad-modal" type="button">Cancelar</button>
+                <button class="primary-button" type="submit">Guardar cambios</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<div class="modal-overlay" id="delete-ad-modal" hidden>
+    <section
+        class="modal-window confirmation-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-ad-title"
+        aria-describedby="delete-ad-description"
+    >
+        <header class="modal-header">
+            <div>
+                <h2 id="delete-ad-title">Eliminar anuncio</h2>
+                <p id="delete-ad-description" class="confirmation-text">
+                    ¿Seguro que deseas eliminar <strong id="delete-ad-name"></strong>?
+                    También se eliminará su imagen y esta acción no se puede deshacer.
+                </p>
+            </div>
+
+            <button
+                class="close-modal-button"
+                id="close-delete-ad-modal"
+                type="button"
+                aria-label="Cerrar confirmación"
+            >
+                <img src="{% static 'icons/cancel.svg' %}" alt="">
+            </button>
+        </header>
+
+        <form method="post" id="delete-ad-form">
+            {% csrf_token %}
+            <div class="modal-actions">
+                <button class="secondary-button" id="cancel-delete-ad" type="button">
+                    Cancelar
+                </button>
+                <button class="danger-button" type="submit">
+                    Sí, eliminar
+                </button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<script>
+(() => {
+    const createModal = document.getElementById("ad-modal");
+    const editModal = document.getElementById("edit-ad-modal");
+    const deleteModal = document.getElementById("delete-ad-modal");
+    const createImageInput = document.getElementById("ad-image");
+    const editImageInput = document.getElementById("edit-ad-image");
+    const createPreview = document.getElementById("create-image-preview");
+    const editPreview = document.getElementById("edit-image-preview");
+    let createPreviewUrl = "";
+    let editPreviewUrl = "";
+
+    function showModal(modal, focusTarget) {
+        modal.hidden = false;
+        document.body.classList.add("modal-is-open");
+        focusTarget.focus();
+    }
+
+    function hideModal(modal) {
+        modal.hidden = true;
+        document.body.classList.remove("modal-is-open");
+    }
+
+    function showFilePreview(input, preview, currentUrlKey) {
+        const file = input.files[0];
+        if (!file) return currentUrlKey;
+
+        if (currentUrlKey) URL.revokeObjectURL(currentUrlKey);
+        const nextUrl = URL.createObjectURL(file);
+        preview.querySelector("img").src = nextUrl;
+        preview.hidden = false;
+        return nextUrl;
+    }
+
+    document.getElementById("open-ad-modal").addEventListener("click", () => {
+        showModal(createModal, document.getElementById("ad-name"));
+    });
+
+    document.getElementById("close-ad-modal").addEventListener("click", () => hideModal(createModal));
+    document.getElementById("cancel-ad-modal").addEventListener("click", () => hideModal(createModal));
+    document.getElementById("close-edit-ad-modal").addEventListener("click", () => hideModal(editModal));
+    document.getElementById("cancel-edit-ad-modal").addEventListener("click", () => hideModal(editModal));
+    document.getElementById("close-delete-ad-modal").addEventListener("click", () => hideModal(deleteModal));
+    document.getElementById("cancel-delete-ad").addEventListener("click", () => hideModal(deleteModal));
+
+    createImageInput.addEventListener("change", () => {
+        createPreviewUrl = showFilePreview(createImageInput, createPreview, createPreviewUrl);
+    });
+
+    editImageInput.addEventListener("change", () => {
+        editPreviewUrl = showFilePreview(editImageInput, editPreview, editPreviewUrl);
+    });
+
+    document.querySelectorAll(".edit-button").forEach((button) => {
+        button.addEventListener("click", () => {
+            document.getElementById("edit-ad-form").action = button.dataset.editUrl;
+            document.getElementById("edit-ad-name").value = button.dataset.adName;
+            document.getElementById("edit-ad-order").value = button.dataset.adOrder;
+            editPreview.querySelector("img").src = button.dataset.adImage;
+            editPreview.hidden = !button.dataset.adImage;
+            editImageInput.value = "";
+            showModal(editModal, document.getElementById("edit-ad-name"));
+        });
+    });
+
+    document.querySelectorAll(".delete-button").forEach((button) => {
+        button.addEventListener("click", () => {
+            document.getElementById("delete-ad-form").action = button.dataset.deleteUrl;
+            document.getElementById("delete-ad-name").textContent = button.dataset.itemName;
+            showModal(deleteModal, document.getElementById("cancel-delete-ad"));
+        });
+    });
+
+    [createModal, editModal, deleteModal].forEach((modal) => {
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) hideModal(modal);
+        });
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!createModal.hidden) hideModal(createModal);
+        if (!editModal.hidden) hideModal(editModal);
+        if (!deleteModal.hidden) hideModal(deleteModal);
+    });
+})();
+</script>
 {% endblock %}

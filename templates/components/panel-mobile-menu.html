@@ -9,7 +9,9 @@
         </button>
     </div>
 
-    {% include "components/search.html" with search_input_id="search-id-mobile" %}
+    {% if request.path != '/panel/' %}
+        {% include "components/search.html" with search_input_id="search-id-mobile" %}
+    {% endif %}
     {% include "components/navigator.html" %}
 </aside>
 

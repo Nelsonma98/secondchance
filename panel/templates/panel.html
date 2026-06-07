@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Perfil y usuarios{% endblock %}
+
+{% block navbar %}
+<div class="hide-web">
+    {% include "components/navigator.html" %}
+</div>
+<div class="panel-mobile-controls">
+    {% include "components/logout.html" %}
+    <button type="button" class="panel-mobile-menu-btn" data-mobile-menu-open aria-label="Abrir menu">
+        <img src="{% static 'icons/menu.svg' %}" alt="" class="panel-mobile-menu-icon">
+    </button>
+</div>
+{% endblock %}
+
+{% block content %}
+{% include "components/panel-mobile-menu.html" %}
+<link rel="stylesheet" href="{% static 'css/panel/profile.css' %}">
+
+<div class="profile-page">
+    {% include "components/messages.html" %}
+
+    <header class="profile-heading">
+        <div>
+            <span class="profile-kicker">Cuenta activa</span>
+            <h1>
+                <span class="gradient-text">Hola</span>, {{ request.user.username }}
+            </h1>
+            <p>Administra tus credenciales y crea accesos para otros miembros del equipo.</p>
+        </div>
+
+        <button class="create-user-button" id="open-create-user-modal" type="button">
+            <span aria-hidden="true">+</span>
+            Nuevo usuario
+        </button>
+    </header>
+
+    <section class="profile-layout">
+        <div class="profile-column">
+            <article class="profile-card identity-card">
+                <div class="profile-card-header">
+                    <div class="profile-icon">
+                        <img src="{% static 'icons/account_circle.svg' %}" alt="">
+                    </div>
+                    <div>
+                        <span class="card-eyebrow">Mi perfil</span>
+                        <h2>{{ request.user.username }}</h2>
+                        <p>Solo puedes editar la cuenta con la que has iniciado sesión.</p>
+                    </div>
+                </div>
+
+                <form action="{% url 'update_profile_username' %}" method="post" class="profile-form">
+                    {% csrf_token %}
+                    <div class="profile-field">
+                        <label for="profile-username">Nombre de usuario</label>
+                        <input
+                            id="profile-username"
+                            name="username"
+                            type="text"
+                            maxlength="150"
+                            value="{{ request.user.username }}"
+                            autocomplete="username"
+                            required
+                        >
+                    </div>
+
+                    <button class="profile-primary-button" type="submit">
+                        Guardar nombre
+                    </button>
+                </form>
+            </article>
+
+            <article class="profile-card security-card">
+                <div class="profile-card-header">
+                    <div class="profile-icon security-icon">
+                        <img src="{% static 'icons/lock.svg' %}" alt="">
+                    </div>
+                    <div>
+                        <span class="card-eyebrow">Seguridad</span>
+                        <h2>Cambiar contraseña</h2>
+                        <p>Verificaremos tu contraseña actual antes de guardar la nueva.</p>
+                    </div>
+                </div>
+
+                <form action="{% url 'update_profile_password' %}" method="post" class="profile-form">
+                    {% csrf_token %}
+
+                    <div class="profile-field">
+                        <label for="current-password">Contraseña actual</label>
+                        <div class="password-control">
+                            <input
+                                id="current-password"
+                                name="current_password"
+                                type="password"
+                                autocomplete="current-password"
+                                required
+                            >
+                            <button id="toggle-current-password" class="password-toggle" type="button" aria-label="Mostrar contraseña">
+                                <img id="current-password-icon" src="{% static 'icons/visibility2.svg' %}" alt="Mostrar contraseña">
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="profile-field">
+                        <label for="new-password">Nueva contraseña</label>
+                        <div class="password-control">
+                            <input
+                                id="new-password"
+                                name="new_password"
+                                type="password"
+                                autocomplete="new-password"
+                                required
+                            >
+                            <button id="toggle-new-password" class="password-toggle" type="button" aria-label="Mostrar contraseña">
+                                <img id="new-password-icon" src="{% static 'icons/visibility2.svg' %}" alt="Mostrar contraseña">
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="profile-field">
+                        <label for="confirm-profile-password">Confirmar nueva contraseña</label>
+                        <div class="password-control">
+                            <input
+                                id="confirm-profile-password"
+                                name="confirm_password"
+                                type="password"
+                                autocomplete="new-password"
+                                required
+                            >
+                            <button id="toggle-confirm-profile-password" class="password-toggle" type="button" aria-label="Mostrar contraseña">
+                                <img id="confirm-profile-password-icon" src="{% static 'icons/visibility2.svg' %}" alt="Mostrar contraseña">
+                            </button>
+                        </div>
+                    </div>
+
+                    <button class="profile-primary-button" type="submit">
+                        Actualizar contraseña
+                    </button>
+                </form>
+            </article>
+
+            <article class="profile-card danger-card">
+                <div class="profile-card-header">
+                    <div class="profile-icon danger-icon">
+                        <img src="{% static 'icons/delete.svg' %}" alt="">
+                    </div>
+                    <div>
+                        <span class="card-eyebrow danger-eyebrow">Zona de peligro</span>
+                        <h2>Eliminar mi cuenta</h2>
+                        <p>Esta acción elimina permanentemente la cuenta con la que estás conectado.</p>
+                    </div>
+                </div>
+
+                <form action="{% url 'delete_profile' %}" method="post" class="profile-form" id="delete-profile-form">
+                    {% csrf_token %}
+                    <div class="profile-field">
+                        <label for="delete-profile-password">Contraseña actual</label>
+                        <div class="password-control">
+                            <input
+                                id="delete-profile-password"
+                                name="current_password"
+                                type="password"
+                                autocomplete="current-password"
+                                required
+                            >
+                            <button id="toggle-delete-profile-password" class="password-toggle" type="button" aria-label="Mostrar contraseña">
+                                <img id="delete-profile-password-icon" src="{% static 'icons/visibility2.svg' %}" alt="Mostrar contraseña">
+                            </button>
+                        </div>
+                    </div>
+
+                    <button class="profile-danger-button" id="open-delete-account-modal" type="button">
+                        Eliminar mi cuenta
+                    </button>
+                </form>
+            </article>
+        </div>
+
+        <article class="profile-card users-card">
+            <div class="users-card-header">
+                <div>
+                    <span class="card-eyebrow">Equipo</span>
+                    <h2>Usuarios</h2>
+                </div>
+                <span class="users-count">{{ users|length }}</span>
+            </div>
+
+            <div class="users-list">
+                {% for user in users %}
+                    <div class="user-row {% if user.pk == request.user.pk %}is-current{% endif %}">
+                        <div class="user-avatar">{{ user.username|first|upper }}</div>
+                        <div class="user-copy">
+                            <strong>{{ user.username }}</strong>
+                            <span>
+                                {% if user.pk == request.user.pk %}
+                                    Sesión actual
+                                {% else %}
+                                    Usuario del panel
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% if user.pk == request.user.pk %}
+                            <span class="current-user-badge">Tú</span>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <p class="users-empty">Todavía no hay usuarios.</p>
+                {% endfor %}
+            </div>
+
+            <p class="users-note">
+                Las demás cuentas se muestran como referencia, pero no pueden editarse desde tu perfil.
+            </p>
+        </article>
+    </section>
+</div>
+
+<div class="profile-modal-overlay" id="create-user-modal" hidden>
+    <section
+        class="profile-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-user-title"
+    >
+        <header class="profile-modal-header">
+            <div>
+                <span class="card-eyebrow">Nuevo acceso</span>
+                <h2 id="create-user-title">Crear usuario</h2>
+                <p>La nueva cuenta podrá iniciar sesión en el panel.</p>
+            </div>
+            <button class="profile-modal-close" id="close-create-user-modal" type="button" aria-label="Cerrar formulario">
+                <img src="{% static 'icons/cancel.svg' %}" alt="">
+            </button>
+        </header>
+
+        <form action="{% url 'create_user' %}" method="post" class="profile-form">
+            {% csrf_token %}
+
+            <div class="profile-field">
+                <label for="new-user-username">Nombre de usuario</label>
+                <input
+                    id="new-user-username"
+                    name="username"
+                    type="text"
+                    maxlength="150"
+                    autocomplete="off"
+                    required
+                >
+            </div>
+
+            <div class="profile-field">
+                <label for="new-user-password">Contraseña</label>
+                <div class="password-control">
+                    <input
+                        id="new-user-password"
+                        name="password"
+                        type="password"
+                        autocomplete="new-password"
+                        required
+                    >
+                    <button id="toggle-new-user-password" class="password-toggle" type="button" aria-label="Mostrar contraseña">
+                        <img id="new-user-password-icon" src="{% static 'icons/visibility2.svg' %}" alt="Mostrar contraseña">
+                    </button>
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label for="confirm-user-password">Confirmar contraseña</label>
+                <div class="password-control">
+                    <input
+                        id="confirm-user-password"
+                        name="confirm_password"
+                        type="password"
+                        autocomplete="new-password"
+                        required
+                    >
+                    <button id="toggle-confirm-user-password" class="password-toggle" type="button" aria-label="Mostrar contraseña">
+                        <img id="confirm-user-password-icon" src="{% static 'icons/visibility2.svg' %}" alt="Mostrar contraseña">
+                    </button>
+                </div>
+            </div>
+
+            <div class="profile-modal-actions">
+                <button class="profile-secondary-button" id="cancel-create-user-modal" type="button">Cancelar</button>
+                <button class="profile-primary-button" type="submit">Crear usuario</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<div class="profile-modal-overlay" id="delete-account-modal" hidden>
+    <section
+        class="profile-modal delete-account-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-account-title"
+        aria-describedby="delete-account-description"
+    >
+        <header class="profile-modal-header">
+            <div>
+                <span class="card-eyebrow danger-eyebrow">Acción permanente</span>
+                <h2 id="delete-account-title">¿Eliminar {{ request.user.username }}?</h2>
+                <p id="delete-account-description">
+                    Perderás el acceso inmediatamente y esta acción no se puede deshacer.
+                </p>
+            </div>
+            <button class="profile-modal-close" id="close-delete-account-modal" type="button" aria-label="Cerrar confirmación">
+                <img src="{% static 'icons/cancel.svg' %}" alt="">
+            </button>
+        </header>
+
+        <div class="profile-modal-actions">
+            <button class="profile-secondary-button" id="cancel-delete-account-modal" type="button">Cancelar</button>
+            <button class="profile-danger-button" id="confirm-delete-account" type="button">
+                Sí, eliminar mi cuenta
+            </button>
+        </div>
+    </section>
+</div>
+
+<script>
+(() => {
+    const createUserModal = document.getElementById("create-user-modal");
+    const deleteAccountModal = document.getElementById("delete-account-modal");
+    const deleteProfileForm = document.getElementById("delete-profile-form");
+    const usernameInput = document.getElementById("new-user-username");
+    const showIcon = "{% static 'icons/visibility2.svg' %}";
+    const hideIcon = "{% static 'icons/visibility_off2.svg' %}";
+
+    function openModal(modal, focusTarget) {
+        modal.hidden = false;
+        document.body.classList.add("profile-modal-is-open");
+        focusTarget.focus();
+    }
+
+    function closeModal(modal) {
+        modal.hidden = true;
+        document.body.classList.remove("profile-modal-is-open");
+    }
+
+    document.getElementById("open-create-user-modal").addEventListener("click", () => {
+        openModal(createUserModal, usernameInput);
+    });
+    document.getElementById("close-create-user-modal").addEventListener("click", () => closeModal(createUserModal));
+    document.getElementById("cancel-create-user-modal").addEventListener("click", () => closeModal(createUserModal));
+
+    document.getElementById("open-delete-account-modal").addEventListener("click", () => {
+        if (!deleteProfileForm.reportValidity()) return;
+        openModal(deleteAccountModal, document.getElementById("cancel-delete-account-modal"));
+    });
+    document.getElementById("close-delete-account-modal").addEventListener("click", () => closeModal(deleteAccountModal));
+    document.getElementById("cancel-delete-account-modal").addEventListener("click", () => closeModal(deleteAccountModal));
+    document.getElementById("confirm-delete-account").addEventListener("click", () => deleteProfileForm.submit());
+
+    [createUserModal, deleteAccountModal].forEach((modal) => {
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) closeModal(modal);
+        });
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!createUserModal.hidden) closeModal(createUserModal);
+        if (!deleteAccountModal.hidden) closeModal(deleteAccountModal);
+    });
+
+    function setupPasswordToggle(inputId, toggleId, iconId) {
+        const passwordInput = document.getElementById(inputId);
+        const togglePassword = document.getElementById(toggleId);
+        const passwordIcon = document.getElementById(iconId);
+
+        if (!passwordInput || !togglePassword || !passwordIcon) return;
+
+        togglePassword.addEventListener("click", function() {
+            const isHidden = passwordInput.type === "password";
+            passwordInput.type = isHidden ? "text" : "password";
+            passwordIcon.src = isHidden ? hideIcon : showIcon;
+            passwordIcon.alt = isHidden ? "Ocultar contraseña" : "Mostrar contraseña";
+            togglePassword.setAttribute(
+                "aria-label",
+                isHidden ? "Ocultar contraseña" : "Mostrar contraseña"
+            );
+        });
+    }
+
+    setupPasswordToggle("current-password", "toggle-current-password", "current-password-icon");
+    setupPasswordToggle("new-password", "toggle-new-password", "new-password-icon");
+    setupPasswordToggle(
+        "confirm-profile-password",
+        "toggle-confirm-profile-password",
+        "confirm-profile-password-icon"
+    );
+    setupPasswordToggle(
+        "delete-profile-password",
+        "toggle-delete-profile-password",
+        "delete-profile-password-icon"
+    );
+    setupPasswordToggle(
+        "new-user-password",
+        "toggle-new-user-password",
+        "new-user-password-icon"
+    );
+    setupPasswordToggle(
+        "confirm-user-password",
+        "toggle-confirm-user-password",
+        "confirm-user-password-icon"
+    );
+})();
+</script>
+{% endblock %}
