@@ -80,6 +80,11 @@ def delete_currency(currency_id):
     """Delete a currency."""
     try:
         currency = Currency.objects.get(id=currency_id)
+        if currency.products.exists():
+            raise ValueError(
+                'No se puede eliminar la moneda porque existen productos que la utilizan.'
+            )
+
         currency.delete()
         return True
     except Currency.DoesNotExist:

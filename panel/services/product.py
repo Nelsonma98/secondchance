@@ -173,10 +173,17 @@ def update_product(product_id, name, description, price, contact_phone, category
 
 
 def delete_product(product_id):
-    """Delete a product."""
+    """Delete a product and its related image file."""
     try:
         product = Product.objects.get(id=product_id)
+        image_name = product.image.name
+        image_storage = product.image.storage
+
         product.delete()
+
+        if image_name:
+            image_storage.delete(image_name)
+
         return True
     except Product.DoesNotExist:
         raise ValueError('Product not found')

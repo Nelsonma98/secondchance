@@ -73,6 +73,11 @@ def delete_category(category_id):
     """Delete a category."""
     try:
         category = Category.objects.get(id=category_id)
+        if category.products.exists():
+            raise ValueError(
+                'No se puede eliminar la categoría porque existen productos que la utilizan.'
+            )
+
         category.delete()
         return True
     except Category.DoesNotExist:
