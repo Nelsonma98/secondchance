@@ -11,8 +11,14 @@ urlpatterns = [
     path('category/edit/<int:category_id>/', views.edit_category, name='edit_category'),
     path('category/delete/<int:category_id>/', views.delete_category, name='delete_category'),
 
+    # Currency
+    path('currencies/', views.currencies_panel, name='currencies_panel'),
+    path('currency/create/', views.create_currency, name='create_currency'),
+    path('currency/edit/<int:currency_id>/', views.edit_currency, name='edit_currency'),
+    path('currency/delete/<int:currency_id>/', views.delete_currency, name='delete_currency'),
+
     # Product
-    path('products', views.products_panel, name='products_panel'),
+    path('products/', views.products_panel, name='products_panel'),
     path('product/create/', views.create_product, name='create_product'),
     path('product/edit/<int:product_id>/', views.edit_product, name='edit_product'),
     path('product/delete/<int:product_id>/', views.delete_product, name='delete_product'),

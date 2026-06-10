@@ -116,11 +116,12 @@
 }
 
 .profile-card {
-    box-sizing: border-box;
     padding: 26px;
-    border: 1px solid rgba(217, 222, 232, 0.9);
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.93);
+    border: 1px solid transparent;
+    background: 
+        linear-gradient(rgba(255, 255, 255, 0.93) 0%) padding-box,
+        linear-gradient(120deg, var(--profile-purple) 25%, var(--profile-blue) 70%, var(--profile-cyan) 100%) border-box;
+    border-radius: 12px;
     box-shadow: 0 10px 30px rgba(29, 35, 58, 0.08);
 }
 
@@ -145,7 +146,7 @@
     display: grid;
     place-items: center;
     border-radius: 14px;
-    background: #f0e9ff;
+    background: #a996d8;
 }
 
 .profile-icon img {
@@ -154,7 +155,7 @@
 }
 
 .security-icon {
-    background: #e8f1ff;
+    background: #a2b8dd;
 }
 
 .danger-card {
@@ -246,8 +247,8 @@
 
 .profile-primary-button {
     color: #ffffff;
-    border: 1px solid var(--profile-ink);
-    background: var(--profile-ink);
+    border: 1px solid var(--profile-purple);
+    background: linear-gradient(120deg, var(--profile-purple) 25%, var(--profile-blue) 70%, var(--profile-cyan) 100%) border-box;
 }
 
 .profile-primary-button:hover {

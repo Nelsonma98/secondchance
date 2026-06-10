@@ -11,8 +11,17 @@
     <meta name="author" content="Nelson Mendoza Alvarez">
     <link rel="icon" type="image/png" href="{% static 'images/icono.png' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script>document.documentElement.classList.add("js");</script>
 </head>
 <body>
+    <div class="page-loader" id="page-loader" role="status" aria-live="polite" aria-label="Cargando página">
+        <div class="page-loader-visual">
+            <span class="page-loader-ring" aria-hidden="true"></span>
+            <img src="{% static 'images/icono.png' %}" alt="">
+        </div>
+        <p>Cargando...</p>
+    </div>
+
     <nav>
          <div class="navbar">
             <img src="{% static 'images/logo.png' %}" alt="Second Chance" class="logo" />
@@ -28,6 +37,10 @@
     </main>
 
     <footer class="footer">
+        <button class="back-to-top" id="back-to-top" type="button" aria-label="Regresar al inicio" title="Regresar al inicio">
+            <img src="{% static 'icons/keyboard_double_arrow_up.svg' %}" alt="">
+        </button>
+
         <div class="footer-content">
             <div class="footer-col">
                 <img src="{% static 'images/logo.png' %}" alt="Second Chance" class="footer-logo" />
@@ -37,7 +50,7 @@
             </div>
             <div class="footer-col">
                 <img src="{% static 'icons/location.svg' %}" alt="Dirección">
-                <p>Calle Falsa 123, Manzanillo, Granma, Cuba.</p>
+                <p>Merchan No.122 e/ Batería y Concepción,<br> Manzanillo, Granma.</p>
             </div>
         </div>
 
@@ -47,5 +60,51 @@
             <p>© Sice 2023, Second Chance. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <script>
+        const pageLoader = document.getElementById("page-loader");
+
+        function showPageLoader() {
+            pageLoader.classList.remove("is-hidden");
+        }
+
+        function hidePageLoader() {
+            pageLoader.classList.add("is-hidden");
+        }
+
+        window.addEventListener("load", hidePageLoader);
+        window.addEventListener("pageshow", hidePageLoader);
+
+        document.addEventListener("click", function (event) {
+            const link = event.target.closest("a");
+            if (
+                !link ||
+                event.defaultPrevented ||
+                event.button !== 0 ||
+                event.ctrlKey ||
+                event.metaKey ||
+                event.shiftKey ||
+                event.altKey ||
+                link.target === "_blank" ||
+                link.hasAttribute("download") ||
+                link.origin !== window.location.origin ||
+                (link.pathname === window.location.pathname && link.hash)
+            ) {
+                return;
+            }
+
+            showPageLoader();
+        });
+
+        document.addEventListener("submit", showPageLoader);
+
+        document.getElementById("back-to-top").addEventListener("click", function () {
+            const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            window.scrollTo({
+                top: 0,
+                behavior: reduceMotion ? "auto" : "smooth"
+            });
+        });
+    </script>
 </body>
 </html>

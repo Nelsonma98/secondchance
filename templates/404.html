@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Página no encontrada{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/404.css' %}">
+
+<section class="error-page" aria-labelledby="error-title">
+    <div class="error-glow error-glow-left" aria-hidden="true"></div>
+    <div class="error-glow error-glow-right" aria-hidden="true"></div>
+
+    <div class="error-content">
+        <div class="error-code" aria-hidden="true">
+            <span>4</span>
+            <img src="{% static 'images/icono.png' %}" alt="">
+            <span>4</span>
+        </div>
+
+        <p class="error-label">PÁGINA NO ENCONTRADA</p>
+        <h1 id="error-title">Parece que esta ruta necesita una segunda oportunidad.</h1>
+        <p class="error-description">
+            La página que buscas no existe, fue movida o la dirección no es correcta.
+        </p>
+
+        <div class="error-actions">
+            <a class="error-primary-button" href="{% url 'home' %}">Volver al inicio</a>
+            <button class="error-secondary-button" type="button" onclick="history.back()">
+                Regresar
+            </button>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -9,6 +9,17 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Currency(models.Model):
+    name = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.strip().upper()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
 class Product(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
@@ -22,6 +33,11 @@ class Product(models.Model):
         Category, 
         on_delete=models.CASCADE, 
         related_name="products"
+    )
+    currency = models.ForeignKey(
+        Currency,
+        on_delete=models.CASCADE,
+        related_name="products",
     )
     created_at = models.DateTimeField(auto_now_add=True)
 

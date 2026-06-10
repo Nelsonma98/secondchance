@@ -104,9 +104,9 @@ def update_ad(ad_id, name, order, image=None):
     except Ad.DoesNotExist:
         raise ValueError('Anuncio no encontrado.')
     
-    ad = Ad.objects.filter(name=name.strip()).exclude(id=ad_id).exists()
-    if ad:
-        raise ValueError('El nombre del anuncio ya existe. Por favor, elige otro nombre.')
+    ad_with_name = Ad.objects.filter(name=name.strip()).exclude(id=ad_id).exists()
+    if ad_with_name:
+            raise ValueError('El nombre del anuncio ya existe. Por favor, elige otro nombre.')
     if not name or not name.strip():
         raise ValueError('El nombre del anuncio no puede estar vacío.')
     if len(name.strip()) > 50:

@@ -82,6 +82,11 @@
 
             </article>
 
+        {% empty %}
+            {% if search %}
+                <p class="empty-message">No se encontraron categorías para “{{ search }}”.</p>
+            {% endif %}
+
         {% endfor %}
 
     </section>

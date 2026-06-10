@@ -1,6 +1,10 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/search.css' %}">
-<form class="search" action="." method="get" aria-label="Buscar">
+<form class="search" action="{{ request.path }}" method="get" aria-label="Buscar">
+    {% for category_id in selected_category_ids %}
+        <input type="hidden" name="category_id" value="{{ category_id }}">
+    {% endfor %}
+
     <input
         type="text"
         name="search"

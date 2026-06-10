@@ -8,13 +8,17 @@
 }
 
 .search {
+    min-width: 0;
     display: flex;
     align-items: center;
     gap: 0;
+    max-width: 100%;
 }
 
 .search input {
+    box-sizing: border-box;
     width: 180px;
+    min-width: 0;
     padding: 8px 10px;
     border-radius: 6px 0px 0px 6px;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -27,6 +31,7 @@
 }
 
 .search button.search-btn{
+    flex-shrink: 0;
     background: linear-gradient(120deg, var(--purple) 25%, var(--blue) 70%, var(--cyan) 100%);
     color: #fff;
     border-top: 1px solid rgba(255, 255, 255, 0.2);

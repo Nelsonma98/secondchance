@@ -7,10 +7,11 @@ from shop.services.home import (
 
 def home(request):
     if request.method == 'GET':
-        category_id = request.GET.get('category_id')
+        category_ids = request.GET.getlist('category_id')
+        search = request.GET.get('search', '')
         page = request.GET.get('page', 1)
 
-        res = get_home_context(category_id, page)
+        res = get_home_context(category_ids, search, page)
 
         return render(request, 'home.html', res)
     

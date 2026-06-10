@@ -10,7 +10,10 @@
 .ads-page {
     min-height: 100vh;
     padding: 24px 40px;
-    background-color: #eeeeee;
+    background:
+        radial-gradient(circle at 90% 5%, rgba(47, 107, 255, 0.12), transparent 28%),
+        radial-gradient(circle at 5% 30%, rgba(112, 39, 237, 0.08), transparent 25%),
+        #f2f3f6;
 }
 
 .ads-grid {
@@ -308,8 +311,8 @@
 
 .primary-button {
     color: #ffffff;
-    border: 1px solid #111827;
-    background-color: #111827;
+    border: 1px solid var(--purple);
+    background: linear-gradient(120deg, var(--purple) 25%, var(--blue) 70%, var(--cyan) 100%) border-box;
 }
 
 .primary-button:hover {

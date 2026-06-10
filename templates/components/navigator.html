@@ -9,7 +9,7 @@
         Perfil
     </a>
     <a
-        href="/panel/products"
+        href="{% url 'products_panel' %}"
         class="panel-nav-link {% if '/panel/products' in request.path or '/panel/product/' in request.path %}is-active{% endif %}"
     >
         Productos
@@ -18,7 +18,13 @@
         href="/panel/categories/"
         class="panel-nav-link {% if '/panel/categories/' in request.path or '/panel/category/' in request.path %}is-active{% endif %}"
     >
-        Categorias
+        Categorías
+    </a>
+    <a
+        href="/panel/currencies/"
+        class="panel-nav-link {% if '/panel/currencies/' in request.path or '/panel/currency/' in request.path %}is-active{% endif %}"
+    >
+        Monedas
     </a>
     <a
         href="/panel/ads/"

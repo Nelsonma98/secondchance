@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Administración de monedas{% endblock %}
+
+{% block navbar %}
+<div class="hide-web">
+    {% include "components/navigator.html" %}
+    {% include "components/search.html" with search_input_id="search-id-desktop" %}
+</div>
+<div class="panel-mobile-controls">
+    {% include "components/logout.html" %}
+    <button type="button" class="panel-mobile-menu-btn" data-mobile-menu-open aria-label="Abrir menu">
+        <img src="{% static 'icons/menu.svg' %}" alt="" class="panel-mobile-menu-icon">
+    </button>
+</div>
+{% endblock %}
+    
+{% block content %}
+{% include "components/panel-mobile-menu.html" %}
+<link rel="stylesheet" href="{% static 'css/panel/currency.css' %}">
+<div class="currencies-page">
+
+    {% include "components/messages.html" %}
+
+    <section class="currencies-grid">
+
+        <!-- Primera tarjeta: abre el formulario -->
+        <button
+            class="currency-card add-currency-card"
+            id="open-currency-modal"
+            type="button"
+        >
+            <span class="plus-symbol">+</span>
+
+            <span class="add-currency-text">
+                Agregar<br>
+                moneda
+            </span>
+        </button>
+
+        <!-- Monedas obtenidas desde la base de datos -->
+        {% for currency in currencies %}
+
+            <article class="currency-card">
+
+                <div>
+                    <h2 class="currency-title">
+                        {{ currency.name }}
+                    </h2>
+
+                    <p class="currency-id">
+                        ID.{{ currency.id }}
+                    </p>
+                </div>
+
+                <div class="currency-actions">
+
+                    <!-- Botón visual para editar -->
+                    <button
+                        class="icon-button edit-button"
+                        type="button"
+                        data-edit-url="{% url 'edit_currency' currency.id %}"
+                        data-currency-name="{{currency.name|escape}}"
+                        aria-label="Editar {{ currency.name }}"
+                        title="Editar moneda"
+                    >
+                        <img src="{% static 'icons/edit_square.svg' %}" alt="">
+                    </button>
+
+                    <button
+                        class="icon-button delete-button"
+                        type="button"
+                        data-delete-url="{% url 'delete_currency' currency.id %}"
+                        data-item-name="{{ currency.name|escape }}"
+                        aria-label="Eliminar {{ currency.name }}"
+                        title="Eliminar moneda"
+                    >
+                        <img src="{% static 'icons/delete.svg' %}" alt="">
+                    </button>
+
+                </div>
+
+            </article>
+
+        {% empty %}
+            {% if search %}
+                <p class="empty-message">No se encontraron monedas para “{{ search }}”.</p>
+            {% endif %}
+
+        {% endfor %}
+
+    </section>
+
+</div>
+
+<!-- Fondo oscuro del formulario emergente -->
+<div class="modal-overlay" id="currency-modal" hidden>
+
+    <section
+        class="modal-window"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+    >
+
+        <header class="modal-header">
+            <div>
+                <h2 id="modal-title">Agregar moneda</h2>
+            </div>
+
+            <button
+                class="close-modal-button"
+                id="close-currency-modal"
+                type="button"
+                aria-label="Cerrar formulario"
+            >
+                <img src="{% static 'icons/cancel.svg' %}" alt="">
+            </button>
+        </header>
+
+        <form action="/panel/currency/create/" method="post" class="currency-form">
+            {% csrf_token %}
+
+            <div class="form-field">
+                <label for="{{ form.name.id_for_label }}">
+                    Nombre de la moneda
+                </label>
+
+                <input
+                    class="currency-input"
+                    id="currency-name"
+                    name="name"
+                    type="text"
+                    required
+                >
+
+                {{ form.name }}
+
+                {% for error in form.name.errors %}
+                    <p class="form-error">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </div>
+
+            <div class="modal-actions">
+                <button
+                    class="secondary-button"
+                    id="cancel-currency-modal"
+                    type="button"
+                >
+                    Cancelar
+                </button>
+
+                <button class="primary-button" type="submit">
+                    Guardar moneda
+                </button>
+            </div>
+        </form>
+
+    </section>
+
+</div>
+
+<div class="modal-overlay" id="edit-currency-modal" hidden>
+
+    <section
+        class="modal-window"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="edit-modal-title"
+    >
+
+        <header class="modal-header">
+            <div>
+                <h2 id="edit-modal-title">Editar moneda</h2>
+            </div>
+
+            <button
+                class="close-modal-button"
+                id="close-currency-modal"
+                type="button"
+                aria-label="Cerrar formulario"
+            >
+                <img src="{% static 'icons/cancel.svg' %}" alt="">
+            </button>
+        </header>
+
+        <form method="post" class="currency-form" id="edit-currency-form">
+            {% csrf_token %}
+
+            <div class="form-field">
+                <label for="{{ form.name.id_for_label }}">
+                    Nombre de la moneda
+                </label>
+
+                <input
+                    class="currency-input"
+                    id="edit-currency-name"
+                    name="name"
+                    type="text"
+                    autocomplete="off"
+                    required
+                >
+            </div>
+
+            <div class="modal-actions">
+                <button
+                    class="secondary-button"
+                    id="cancel-edit-modal"
+                    type="button"
+                >
+                    Cancelar
+                </button>
+
+                <button class="primary-button" type="submit">
+                    Guardar cambios
+                </button>
+            </div>
+        </form>
+
+    </section>
+
+</div>
+
+<div class="modal-overlay" id="delete-currency-modal" hidden>
+    <section
+        class="modal-window confirmation-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-currency-title"
+        aria-describedby="delete-currency-description"
+    >
+        <header class="modal-header">
+            <div>
+                <h2 id="delete-currency-title">Eliminar moneda</h2>
+                <p id="delete-currency-description" class="confirmation-text">
+                    ¿Seguro que deseas eliminar <strong id="delete-currency-name"></strong>?
+                    También se eliminarán sus productos asociados y esta acción no se puede deshacer.
+                </p>
+            </div>
+
+            <button
+                class="close-modal-button"
+                id="close-delete-currency-modal"
+                type="button"
+                aria-label="Cerrar confirmación"
+            >
+                <img src="{% static 'icons/cancel.svg' %}" alt="">
+            </button>
+        </header>
+
+        <form method="post" id="delete-currency-form">
+            {% csrf_token %}
+            <div class="modal-actions">
+                <button class="secondary-button" id="cancel-delete-currency" type="button">
+                    Cancelar
+                </button>
+                <button class="danger-button" type="submit">
+                    Sí, eliminar
+                </button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<script>
+    // Create
+    const modal = document.getElementById("currency-modal");
+    const openModalButton = document.getElementById("open-currency-modal");
+    const closeModalButton = document.getElementById("close-currency-modal");
+    const cancelModalButton = document.getElementById("cancel-currency-modal");
+    const currencyInput = document.getElementById("{{ form.name.id_for_label }}");
+
+    function openModal() {
+        modal.hidden = false;
+        document.body.classList.add("modal-is-open");
+        currencyInput.focus();
+    }
+
+    function closeModal() {
+        modal.hidden = true;
+        document.body.classList.remove("modal-is-open");
+    }
+
+    openModalButton.addEventListener("click", openModal);
+    closeModalButton.addEventListener("click", closeModal);
+    cancelModalButton.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !modal.hidden) {
+            closeModal();
+        }
+    });
+
+    //Edit
+    const editModal = document.getElementById("edit-currency-modal");
+    const editForm = document.getElementById("edit-currency-form");
+    const editInput = document.getElementById("edit-currency-name");
+
+    const closeEditModalButton = document.getElementById("close-currency-modal");
+
+    const cancelEditModalButton = document.getElementById("cancel-edit-modal");
+
+    const editButtons = document.querySelectorAll(".edit-button");
+
+    function openEditModal(button) {
+        const editUrl = button.dataset.editUrl;
+        const currentName = button.dataset.currencyName;
+
+        editForm.action = editUrl;
+        editInput.value = currentName;
+
+        editModal.hidden = false;
+        document.body.classList.add("modal-is-open");
+
+        editInput.focus();
+        editInput.select();
+    }
+
+    function closeEditModal() {
+        editModal.hidden = true;
+        document.body.classList.remove("modal-is-open");
+
+        editForm.action = "";
+        editInput.value = "";
+    }
+
+    editButtons.forEach(function(button){
+        button.addEventListener("click", function(){
+            openEditModal(button);
+        });
+    });
+
+    closeEditModalButton.addEventListener(
+        "click",
+        closeEditModal
+    );
+
+    cancelEditModalButton.addEventListener(
+        "click",
+        closeEditModal
+    );
+
+    editModal.addEventListener("click", function(event){
+        if (event.target === editModal){
+            closeEditModal();
+        }
+    });
+
+    document.addEventListener("keydown", function(event){
+        if(event.key === "Escape" && !editModal.hidden){
+            closeEditModal();
+        }
+    });
+
+    // Delete confirmation
+    const deleteModal = document.getElementById("delete-currency-modal");
+    const deleteForm = document.getElementById("delete-currency-form");
+    const deletecurrencyName = document.getElementById("delete-currency-name");
+    const deleteButtons = document.querySelectorAll(".delete-button");
+
+    function openDeleteModal(button) {
+        deleteForm.action = button.dataset.deleteUrl;
+        deletecurrencyName.textContent = button.dataset.itemName;
+        deleteModal.hidden = false;
+        document.body.classList.add("modal-is-open");
+        document.getElementById("cancel-delete-currency").focus();
+    }
+
+    function closeDeleteModal() {
+        deleteModal.hidden = true;
+        deleteForm.action = "";
+        deletecurrencyName.textContent = "";
+        document.body.classList.remove("modal-is-open");
+    }
+
+    deleteButtons.forEach(function(button) {
+        button.addEventListener("click", function() {
+            openDeleteModal(button);
+        });
+    });
+
+    document.getElementById("close-delete-currency-modal").addEventListener("click", closeDeleteModal);
+    document.getElementById("cancel-delete-currency").addEventListener("click", closeDeleteModal);
+
+    deleteModal.addEventListener("click", function(event) {
+        if (event.target === deleteModal) {
+            closeDeleteModal();
+        }
+    });
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && !deleteModal.hidden) {
+            closeDeleteModal();
+        }
+    });
+</script>
+
+{% endblock %}

@@ -3,12 +3,388 @@
 
 {% block title %}Página principal{% endblock %}
 
-<link rel="stylesheet" href="{% static 'css/home.css' %}">
-
 {% block navbar %}
 {% include "components/search.html" %}
 {% endblock %}
 
 {% block content %}
-<h1>Pagina principal</h1>
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+<div class="home-page">
+    {% if ads %}
+        <section
+            class="ads-carousel"
+            aria-label="Anuncios destacados{% if ads|length > 1 %}. Toca para pausar{% endif %}"
+            {% if ads|length > 1 %}role="button" tabindex="0" aria-pressed="false"{% endif %}
+        >
+            <div class="carousel-track{% if ads|length > 1 %} is-animated{% endif %}">
+                <div class="carousel-group">
+                    {% for ad in ads %}
+                        <img class="carousel-image" src="{{ ad.image.url }}" alt="{{ ad.name }}">
+                    {% endfor %}
+                </div>
+
+                {% if ads|length > 1 %}
+                    <div class="carousel-group" aria-hidden="true">
+                        {% for ad in ads %}
+                            <img class="carousel-image" src="{{ ad.image.url }}" alt="">
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    {% endif %}
+
+    {% if categories %}
+        <section class="catalog-section" aria-labelledby="catalog-title">
+            <nav class="category-filter" aria-label="Filtrar productos por categoría">
+                <button
+                    class="category-scroll-button category-scroll-previous"
+                    type="button"
+                    aria-label="Ver categorías anteriores"
+                    hidden
+                >
+                    <span aria-hidden="true">‹</span>
+                </button>
+
+                <div class="category-filter-viewport">
+                    <div class="category-filter-track">
+                        {% for category in categories %}
+                            <a
+                                class="category-chip{% if category.id in selected_category_ids %} is-selected{% endif %}"
+                                href="{{ category.filter_url }}"
+                                aria-label="{% if category.id in selected_category_ids %}Quitar{% else %}Agregar{% endif %} filtro {{ category.name }}"
+                            >
+                                {{ category.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button
+                    class="category-scroll-button category-scroll-next"
+                    type="button"
+                    aria-label="Ver más categorías"
+                    hidden
+                >
+                    <span aria-hidden="true">›</span>
+                </button>
+            </nav>
+
+            <div class="product-grid">
+                {% for product in products %}
+                    <article class="catalog-product-card">
+                        <button
+                            class="catalog-product-trigger"
+                            type="button"
+                            data-product-name="{{ product.name|escape }}"
+                            data-product-description="{{ product.description|escape }}"
+                            data-product-price="{{ product.price }}"
+                            data-product-currency="{{ product.currency.name|escape }}"
+                            data-product-id="{{ product.id }}"
+                            data-product-phone="{{ product.contact_phone|escape }}"
+                            data-product-category="{{ product.category.name|escape }}"
+                            data-product-image="{{ product.image.url }}"
+                            aria-label="Ver detalles de {{ product.name }}"
+                        >
+                            <div class="catalog-product-image-wrap">
+                                <img class="catalog-product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+                            </div>
+                            <div class="catalog-product-info">
+                                <h2>{{ product.name }}</h2>
+                                <div class="catalog-product-meta">
+                                    <div class="catalog-product-price-group">
+                                        <p class="catalog-product-price">${{ product.price }}</p>
+                                        <span class="catalog-product-currency">{{ product.currency.name }}</span>
+                                    </div>
+                                    <p class="catalog-product-id">ID.{{ product.id }}</p>
+                                </div>
+                            </div>
+                        </button>
+                    </article>
+                {% empty %}
+                    <p class="catalog-empty">
+                        No hay productos que coincidan con los filtros seleccionados.
+                    </p>
+                {% endfor %}
+            </div>
+
+            {% if products.has_other_pages %}
+                <nav class="catalog-pagination" aria-label="Páginas de productos">
+                    {% if previous_page_url %}
+                        <a href="{{ previous_page_url }}">
+                            Anterior
+                        </a>
+                    {% endif %}
+
+                    <span>Página {{ products.number }} de {{ products.paginator.num_pages }}</span>
+
+                    {% if next_page_url %}
+                        <a href="{{ next_page_url }}">
+                            Siguiente
+                        </a>
+                    {% endif %}
+                </nav>
+            {% endif %}
+        </section>
+    {% endif %}
+</div>
+
+<div class="product-modal-overlay" id="product-detail-modal" hidden>
+    <section
+        class="product-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="product-modal-name"
+    >
+        <button class="product-modal-close" type="button" aria-label="Cerrar detalles">
+            <img src="{% static 'icons/cancel.svg' %}" alt="">
+        </button>
+
+        <div class="product-modal-image-wrap">
+            <img id="product-modal-image" src="" alt="">
+        </div>
+
+        <div class="product-modal-content">
+            <div class="product-modal-heading">
+                <p class="product-modal-category" id="product-modal-category"></p>
+                <h2 id="product-modal-name"></h2>
+                <div class="product-modal-meta">
+                    <div class="product-modal-price-group">
+                        <p class="product-modal-price" id="product-modal-price"></p>
+                        <span class="product-modal-currency" id="product-modal-currency"></span>
+                    </div>
+                    <p class="product-modal-id" id="product-modal-id"></p>
+                </div>
+            </div>
+
+            <div class="product-modal-description">
+                <h3>Descripción</h3>
+                <p class="is-collapsed" id="product-modal-description"></p>
+                <button class="product-description-toggle" id="product-description-toggle" type="button" hidden>
+                    Mostrar más
+                </button>
+            </div>
+
+            <a
+                class="product-modal-whatsapp"
+                id="product-modal-whatsapp"
+                href=""
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Pedir por WhatsApp
+            </a>
+        </div>
+    </section>
+</div>
+
+{% if categories %}
+<script>
+(() => {
+    const filter = document.querySelector(".category-filter");
+    const viewport = filter.querySelector(".category-filter-viewport");
+    const previousButton = filter.querySelector(".category-scroll-previous");
+    const nextButton = filter.querySelector(".category-scroll-next");
+    const categoryLinks = filter.querySelectorAll(".category-chip");
+    const scrollPositionKey = "home-category-filter-scroll";
+
+    function updateScrollButtons() {
+        const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+        const hasOverflow = maxScroll > 2;
+
+        previousButton.hidden = !hasOverflow || viewport.scrollLeft <= 2;
+        nextButton.hidden = !hasOverflow || viewport.scrollLeft >= maxScroll - 2;
+    }
+
+    function scrollCategories(direction) {
+        viewport.scrollBy({
+            left: direction * Math.max(viewport.clientWidth * 0.7, 180),
+            behavior: "smooth"
+        });
+    }
+
+    previousButton.addEventListener("click", () => scrollCategories(-1));
+    nextButton.addEventListener("click", () => scrollCategories(1));
+    viewport.addEventListener("scroll", updateScrollButtons, { passive: true });
+    window.addEventListener("resize", updateScrollButtons);
+
+    categoryLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+            sessionStorage.setItem(
+                scrollPositionKey,
+                JSON.stringify({
+                    pageY: window.scrollY,
+                    categoriesX: viewport.scrollLeft
+                })
+            );
+        });
+    });
+
+    window.addEventListener("load", () => {
+        const savedPosition = sessionStorage.getItem(scrollPositionKey);
+        const selectedChip = viewport.querySelector(".category-chip.is-selected:last-of-type");
+
+        if (savedPosition) {
+            const position = JSON.parse(savedPosition);
+            viewport.scrollLeft = position.categoriesX;
+            window.scrollTo({ top: position.pageY, behavior: "auto" });
+            sessionStorage.removeItem(scrollPositionKey);
+        } else if (selectedChip) {
+            viewport.scrollLeft = Math.max(
+                0,
+                selectedChip.offsetLeft -
+                    (viewport.clientWidth - selectedChip.offsetWidth) / 2
+            );
+        }
+
+        updateScrollButtons();
+    });
+    updateScrollButtons();
+})();
+</script>
+{% endif %}
+
+<script>
+(() => {
+    const modal = document.getElementById("product-detail-modal");
+    const closeButton = modal.querySelector(".product-modal-close");
+    const triggers = document.querySelectorAll(".catalog-product-trigger");
+    const description = document.getElementById("product-modal-description");
+    const descriptionToggle = document.getElementById("product-description-toggle");
+    let activeTrigger = null;
+    let modalAddedHistoryEntry = false;
+
+    function getProductUrl(productId) {
+        const productUrl = new URL(window.location.href);
+        productUrl.searchParams.set("product", productId);
+        return productUrl;
+    }
+
+    function openProductModal(trigger, updateHistory = true) {
+        const product = trigger.dataset;
+        activeTrigger = trigger;
+
+        document.getElementById("product-modal-image").src = product.productImage;
+        document.getElementById("product-modal-image").alt = product.productName;
+        document.getElementById("product-modal-name").textContent = product.productName;
+        document.getElementById("product-modal-price").textContent = `$${product.productPrice}`;
+        document.getElementById("product-modal-currency").textContent = product.productCurrency;
+        document.getElementById("product-modal-id").textContent = `ID.${product.productId}`;
+        document.getElementById("product-modal-category").textContent = product.productCategory;
+        description.textContent =
+            product.productDescription || "Sin descripción disponible.";
+        description.classList.add("is-collapsed");
+        descriptionToggle.textContent = "Mostrar más";
+        descriptionToggle.hidden = true;
+
+        const productUrl = getProductUrl(product.productId);
+        const whatsappMessage =
+            `Me interesa el producto: ${product.productName}\n${productUrl.href}`;
+        const whatsappButton = document.getElementById("product-modal-whatsapp");
+        whatsappButton.href =
+            `https://wa.me/53${product.productPhone}?text=${encodeURIComponent(whatsappMessage)}`;
+
+        modal.hidden = false;
+        document.body.classList.add("product-modal-is-open");
+
+        window.requestAnimationFrame(() => {
+            descriptionToggle.hidden =
+                description.scrollHeight <= description.clientHeight + 1;
+        });
+
+        if (updateHistory) {
+            window.history.pushState(
+                { productModal: product.productId },
+                "",
+                productUrl
+            );
+            modalAddedHistoryEntry = true;
+        }
+
+        closeButton.focus();
+    }
+
+    function hideProductModal() {
+        modal.hidden = true;
+        document.body.classList.remove("product-modal-is-open");
+        if (activeTrigger) activeTrigger.focus();
+    }
+
+    function closeProductModal() {
+        if (modalAddedHistoryEntry) {
+            modalAddedHistoryEntry = false;
+            window.history.back();
+        } else {
+            const cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete("product");
+            window.history.replaceState({}, "", cleanUrl);
+            hideProductModal();
+        }
+    }
+
+    triggers.forEach((trigger) => {
+        trigger.addEventListener("click", () => openProductModal(trigger));
+    });
+
+    closeButton.addEventListener("click", closeProductModal);
+    descriptionToggle.addEventListener("click", () => {
+        const isCollapsed = description.classList.toggle("is-collapsed");
+        descriptionToggle.textContent = isCollapsed ? "Mostrar más" : "Mostrar menos";
+    });
+
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) closeProductModal();
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !modal.hidden) closeProductModal();
+    });
+
+    window.addEventListener("popstate", () => {
+        const productId = new URL(window.location.href).searchParams.get("product");
+        const trigger = productId
+            ? document.querySelector(`[data-product-id="${CSS.escape(productId)}"]`)
+            : null;
+
+        modalAddedHistoryEntry = false;
+        if (trigger) openProductModal(trigger, false);
+        else hideProductModal();
+    });
+
+    const sharedProductId = new URL(window.location.href).searchParams.get("product");
+    if (sharedProductId) {
+        const sharedProductTrigger =
+            document.querySelector(`[data-product-id="${CSS.escape(sharedProductId)}"]`);
+        if (sharedProductTrigger) openProductModal(sharedProductTrigger, false);
+    }
+})();
+</script>
+
+{% if ads|length > 1 %}
+<script>
+(() => {
+    const carousel = document.querySelector(".ads-carousel");
+    const track = carousel.querySelector(".carousel-track");
+
+    function toggleCarousel() {
+        const isPaused = track.classList.toggle("is-paused");
+        carousel.setAttribute("aria-pressed", String(isPaused));
+        carousel.setAttribute(
+            "aria-label",
+            isPaused
+                ? "Anuncios destacados. Toca para continuar"
+                : "Anuncios destacados. Toca para pausar"
+        );
+    }
+
+    carousel.addEventListener("click", toggleCarousel);
+    carousel.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        toggleCarousel();
+    });
+})();
+</script>
+{% endif %}
 {% endblock %}
