@@ -78,11 +78,10 @@ WSGI_APPLICATION = 'secondchance.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'my_database_mysql',
-        'USER': 'usuario',
-        'PASSWORD': 'password123',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'NAME': 'Dante96lgc$second_chance',
+        'USER': 'Dante96lgc',
+        'PASSWORD': 'SecondChance96lgc',
+        'HOST': 'Dante96lgc.mysql.pythonanywhere-services.com',
     }
 }
 
