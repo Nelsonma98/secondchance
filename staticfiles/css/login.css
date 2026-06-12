@@ -1,0 +1,233 @@
+/* Estilos para la página de login */
+:root{
+  --dark: #020010;
+  --dark-2: #06001A;
+  --dark-3: #090027;
+  --purple: #7B2CFF;
+  --blue: #2F6BFF;
+  --cyan: #00C8FF;
+  --white: #ffffff;
+}
+
+.login{
+  min-height: calc(100vh - 80px);
+  min-height: calc(100svh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: max(2rem, env(safe-area-inset-top));
+  padding-right: max(2rem, env(safe-area-inset-right));
+  padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  padding-left: max(2rem, env(safe-area-inset-left));
+  background-image: url('../images/fondo-login.png');
+  background-size: cover;
+  background-position: center center;
+  font-family: Arial, sans-serif;
+  flex-direction: column;
+}
+
+@supports (min-height: 100dvh) {
+  .login {
+    min-height: calc(100dvh - 80px);
+  }
+}
+
+.card{
+  width: 100%;
+  max-width: 320px;
+  border: 1px solid transparent;
+  background: 
+    linear-gradient(var(--dark) 0%, var(--dark-2) 50%, var(--dark) 100%) padding-box,
+    linear-gradient(120deg, var(--purple) 25%, var(--blue) 70%, var(--cyan) 100%) border-box;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(2,0,16,0.35);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--white);
+}
+
+.logo-login {
+  display: flex;
+  justify-content: center;
+}
+
+.logo-login img {
+  height: auto;
+  width: 140px;
+}
+
+.error{
+  display: flex;
+  background: #fee;
+  color: #c33;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.close-error {
+  margin-left: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.card p {
+  font-size: 15px;
+}
+
+.text-login h1{
+  margin: 0 0 4px 0;
+  font-size: 1.5rem;
+  text-align: center;
+  color: var(--white);
+}
+
+.text-login p {
+  font-size: small;
+  text-align: center;
+  color: var(--white);
+}
+
+.gradient-text {
+  background: linear-gradient(120deg, var(--purple) 25%, var(--blue) 70%, var(--cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.card form{
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  justify-content: center;
+}
+
+.card input[type="text"],
+.card input[type="password"]{
+  padding: 10px 12px 10px 42px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);;
+  font-size: 0.95rem;
+  margin: 10px;
+  background: var(--dark-3);
+  color: var(--white);
+}
+
+.password-field {
+  position: relative;
+  margin: 10px;
+}
+
+.username-field {
+  position: relative;
+  margin: 10px;
+}
+
+.username-field input[type="text"] {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding-left: 42px;
+}
+
+.password-field input[type="password"],
+.password-field input[type="text"] {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding-right: 42px;
+  padding-left: 42px;
+}
+
+.icon-username {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+}
+
+.icon-password {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Evita que Chrome pinte fondo blanco en campos autocompletados */
+.card input:-webkit-autofill,
+.card input:-webkit-autofill:hover,
+.card input:-webkit-autofill:focus,
+.card input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--white);
+  caret-color: var(--white);
+  -webkit-box-shadow: 0 0 0 1000px var(--dark-3) inset;
+  box-shadow: 0 0 0 1000px var(--dark-3) inset;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: background-color 9999s ease-out 0s;
+}
+
+.btn-primary{
+  background: linear-gradient(120deg, var(--purple) 30%, var(--blue) 75%, var(--cyan) 100%);
+  color: #fff;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.card p.error, .card .errorlist{
+  color: #b00020;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+@media (max-width:600px){
+  .card{ 
+    width: 80%;
+    padding: 18px; 
+    margin: 30px 20px; 
+  }
+  .login{ 
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    padding-left: max(1rem, env(safe-area-inset-left));
+    background-position: top center; 
+    background-image: url('../images/fondo-movil.png');
+  }
+}

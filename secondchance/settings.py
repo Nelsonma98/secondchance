@@ -23,9 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!mms&(n^k8hx#te*w42kt6&yht!qb$p*qmkgwjw+t&i8il87h='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+        "Dante96lgc.pythonanywhere.com"
+    ]
 
 
 # Application definition
@@ -82,6 +84,7 @@ DATABASES = {
         'USER': 'Dante96lgc',
         'PASSWORD': 'SecondChance96lgc',
         'HOST': 'Dante96lgc.mysql.pythonanywhere-services.com',
+        'PORT': '3306'
     }
 }
 
@@ -122,6 +125,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR/'staticfiles'
 LOGIN_URL = '/panel/login/'
 
 # Default primary key field type
